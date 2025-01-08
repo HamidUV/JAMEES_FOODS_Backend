@@ -1,1 +1,1 @@
-// Configure Sequelize with a connection pool
+// Configure Sequelize with a connection poolll
