@@ -1,0 +1,1 @@
+// Configure Sequelize with a connection pool
