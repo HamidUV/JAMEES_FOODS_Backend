@@ -18,7 +18,7 @@ app.use(express.json());
 app.use('/user',userRoute);
 app.use('/store',salesRoute);
 app.use('/admin',adminRoute);
-app.use('/',router);
+app.use('/refresh',router);
 
 app.get('/',(req,res) => {
     res.send('Working')
