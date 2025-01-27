@@ -20,7 +20,9 @@ app.use('/store',salesRoute);
 app.use('/admin',adminRoute);
 app.use('/',router);
 
-
+app.get('/',(req,res) => {
+    res.send('Working')
+});
 
 // const seedAdmin = async () => {
 //   try {
