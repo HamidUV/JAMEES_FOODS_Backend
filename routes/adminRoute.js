@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { actvedeacitvesalesman, adminLogin, deleteStore, getallStoreAdmin, getallUserAdmin, geteachsalesmandetails, geteachStore } from "../controllers/adminController.js";
+import { adminLogin, deacitvestores, getallStoreAdmin, getAllUsersExceptAdmins, geteachsalesmandetails, geteachStore, toggleUserStatus } from "../controllers/adminController.js";
 import { verifyAccessToken } from "../middlewares/authMiddleware.js";
 
 const adminRoute=Router();
@@ -18,7 +18,7 @@ adminRoute.get('/geteachstore/:storeid',verifyAccessToken,geteachStore);
 
 
 //to get all the users
-adminRoute.get('/getalluseradmin',verifyAccessToken,getallUserAdmin);
+adminRoute.get('/getalluseradmin',verifyAccessToken,getAllUsersExceptAdmins);
 
 
 //to get all details of the users
@@ -26,11 +26,14 @@ adminRoute.get('/geteachsalesmandetails/:userid',verifyAccessToken,geteachsalesm
 
 
 //to activate and deactivate the salesman
-adminRoute.put('/activate-deactivate/:userid',verifyAccessToken,actvedeacitvesalesman);
+adminRoute.put('/activate-deactivate-user/:userid',verifyAccessToken,toggleUserStatus);
 
 
 //to delete the store
-adminRoute.delete('/deletestore/:storeid',verifyAccessToken,deleteStore)
+adminRoute.put('/activate-deactivate-store/:storeid',verifyAccessToken,deacitvestores);
+
+//delete or deactivate
+// adminRoute.delete('/deletestore/:storeid',verifyAccessToken,deleteStore)
 
 
 export default adminRoute;

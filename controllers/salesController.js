@@ -20,6 +20,10 @@ export const createStore = async (req, res, next) => {
         
         
         const user_id = req.user.id; // From decoded JWT
+
+        //check store existing or not
+        
+
         // Validate the required fields
         if (!store_name || !store_phonenumber || !store_area || !store_emirate ) {
             return res.status(400).json({ message: 'All fields are required' });
@@ -143,26 +147,68 @@ export const checkout = async (req, res, next) => {
 
 
 
-//getallstore
+//getallstore - active stores only
 
-export const getallStore = async (req, res) => {
-    try {
-        const user_id = req.userId; // This will be set by the authenticateToken middleware
+export const getAllActiveStores = async (req, res) => {
+  try {
+    // Fetch active stores (is_active: true) for all users
+    const activeStores = await Store.findAll({
+      where: {
+        is_active: true,
+      },
+    });
 
-        // Fetch books for the specific user, or all books if no user_id
-        const store = await Store.findAll(user_id ? { where: { user_id } } : {});
-
-        if (!store || store.length === 0) {
-            return res.status(404).send({ message: 'No stores found' });
-        }
-
-        res.status(200).send({ store });
-    } catch (error) {
-        console.error(error); // Log the error for debugging
-        res.status(500).send({ message: error.message });
+    if (!activeStores || activeStores.length === 0) {
+      return res.status(404).send({ message: "No active stores found" });
     }
+
+    res.status(200).send({
+      message: "Active stores retrieved successfully",
+      stores: activeStores,
+    });
+  } catch (error) {
+    console.error("Error fetching active stores:", error);
+    res.status(500).send({ message: error.message });
+  }
 };
 
+
+//get all stores of that user - active & deactive stores
+export const getUserStores = async (req, res) => {
+    try {
+      const user_id = req.user.id; // Authenticated user ID from middleware
+  
+      if (!user_id) {
+        return res.status(400).send({ message: "User ID is required" });
+      }
+  
+      // Fetch all stores created by this user
+      const userStores = await Store.findAll({
+        where: {
+          created_by: user_id,
+        },
+      });
+  
+      if (!userStores || userStores.length === 0) {
+        return res.status(404).send({ message: "No stores found for this user" });
+      }
+  
+      // Separate active and deactivated stores
+      const activeStores = userStores.filter((store) => store.is_active);
+      const deactivatedStores = userStores.filter((store) => !store.is_active);
+  
+      res.status(200).send({
+        message: "User's stores retrieved successfully",
+        activeStores,
+        deactivatedStores,
+      });
+    } catch (error) {
+      console.error("Error fetching user's stores:", error);
+      res.status(500).send({ message: error.message });
+    }
+  };
+  
+  
 
 
 

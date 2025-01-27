@@ -44,33 +44,79 @@ export const signup = async (req, res, next) => {
     }
 };
 
+// export const login = async (req, res, next) => {
+//     try {
+//         let { user_email, user_password } = req.body;
+//         if (!user_email) throw { email: "emaial is required" };
+//         if (!user_password) throw { name: "Password is required" };
+//         let user = await User.findOne({
+//             where: {
+//                 user_email
+//             }
+//         });
+//         console.log(user.user_id);
+//         console.log('gj');
+        
+        
+        
+//         if (!user) throw { name: "Invalid name/password" };
+//         let valid = await bcrypt.compare(user_password, user.user_password); 
+                
+//         if (!valid) throw { name: "Invalid name/password" };
+//         let access_token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET); 
+//         let refresh_token = jwt.sign({ id: user.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });//refresh_token
 
+      
+//         res.status(200).json({ message:"your are logged in",access_token,refresh_token });
+//     } catch (error) {
+//         next(error);
+//     }
+// }
 
 export const login = async (req, res, next) => {
     try {
         let { user_email, user_password } = req.body;
-        if (!user_email) throw { email: "emaial is required" };
+
+        if (!user_email) throw { email: "Email is required" };
         if (!user_password) throw { name: "Password is required" };
+
         let user = await User.findOne({
             where: {
                 user_email
             }
         });
-        console.log(user.user_id);
-        console.log('gj');
-        
-        
-        
-        if (!user) throw { name: "Invalid name/password" };
-        let valid = await bcrypt.compare(user_password, user.user_password); 
-                
-        if (!valid) throw { name: "Invalid name/password" };
-        let access_token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET); 
-        let refresh_token = jwt.sign({ id: user.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });//refresh_token
 
-      
-        res.status(200).json({ message:"your are logged in",access_token,refresh_token });
+        // Check if user exists
+        if (!user) throw { name: "Invalid email/password" };
+
+        // Check if user is active
+        if (!user.is_active) {
+            return res.status(403).json({ message: "Your account is deactivated" });
+        };
+        console.log('active');
+        // Validate password
+        let valid = await bcrypt.compare(user_password, user.user_password); 
+
+        if (!valid) throw { name: "Invalid email/password" };
+
+        // Generate JWT tokens
+        let access_token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        let refresh_token = jwt.sign({ id: user.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+
+        // Send response with tokens
+        res.status(200).json({ message: "You are logged in", access_token, refresh_token });
     } catch (error) {
         next(error);
+    }
+};
+
+
+export const logout = async (req,res) =>{
+    try{
+        const user = req.user ;
+
+
+    } catch {
+
     }
 }
