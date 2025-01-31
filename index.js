@@ -9,10 +9,13 @@ import router from "./routes/refreshRoute.js";
 // import User from './models/userModel.js';
 // import bcrypt from 'bcrypt';
 
+import cors from 'cors'
 
 dotenv.config();
 const app=express();
 const PORT = process.env.PORT;
+
+app.use(cors());
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use('/user',userRoute);

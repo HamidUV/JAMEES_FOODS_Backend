@@ -17,7 +17,7 @@ salesRoute.post('/checkout/:storeid',verifyAccessToken,checkUserActive,checkout)
 salesRoute.get('/getallstore',verifyAccessToken,checkUserActive,getAllActiveStores);
 
 //to get all stores of a user
-salesRoute.get('/getallstoreofuser', verifyAccessToken,checkUserActive, getUserStores)
+salesRoute.get('/getallstoreofuser', verifyAccessToken,checkUserActive, getUserStores);
 
 //to getstore by the user made
 salesRoute.get("/getstore/:id", verifyAccessToken,checkUserActive, getStoresById);

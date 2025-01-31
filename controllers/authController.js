@@ -8,41 +8,58 @@ dotenv.config();
 export const signup = async (req, res, next) => {
     try {
         console.log(req.body);
-        const { user_name, user_email, user_password } = req.body;
+        const { user_name, user_email, user_phone, user_password } = req.body;
 
-        if (!user_name || !user_password || !user_email) {
+        // Validate required fields
+        if (!user_name || !user_email || !user_phone || !user_password) {
             return res.status(400).send({ message: 'All fields are required' });
         }
 
+        // Check if email or phone number already exists
+        const existingUser = await User.findOne({ where: { user_email } });
+        const existingPhone = await User.findOne({ where: { user_phone } });
+
+        if (existingUser) {
+            return res.status(409).json({ message: "Email is already in use" });
+        }
+
+        if (existingPhone) {
+            return res.status(409).json({ message: "Phone number is already in use" });
+        }
+
+        // Hash the password
         const hashedPassword = await bcrypt.hash(user_password, 10);
 
+        // Create user
         const userData = await User.create({
             user_name,
             user_email,
+            user_phone,
             user_password: hashedPassword
         });
 
-        console.log('JWT_SECRET:', process.env.JWT_SECRET);
-        console.log('JWT_REFRESH_SECRET:', process.env.JWT_REFRESH_SECRET);
-
+        // Check for JWT secrets in environment variables
         if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
             return res.status(500).send({ message: 'Server misconfiguration: Missing JWT secret' });
         }
 
-        let access_token = jwt.sign({ id: userData.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' }); //access_token
-        let refresh_token = jwt.sign({ id: userData.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' }); //refresh_token
+        // Generate JWT tokens
+        let access_token = jwt.sign({ id: userData.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        let refresh_token = jwt.sign({ id: userData.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 
         res.status(200).json({
-            message: "You are in",
+            message: "Signup successful",
             access_token,
             refresh_token
         });
+
         console.log('User created');
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: error.message });
     }
 };
+
 
 // export const login = async (req, res, next) => {
 //     try {
@@ -111,12 +128,12 @@ export const login = async (req, res, next) => {
 };
 
 
-export const logout = async (req,res) =>{
-    try{
-        const user = req.user ;
+// export const logout = async (req,res) =>{
+//     try{
+//         const user = req.user ;
 
 
-    } catch {
+//     } catch {
 
-    }
-}
+//     }
+// }

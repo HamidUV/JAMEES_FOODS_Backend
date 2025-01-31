@@ -1,12 +1,3 @@
-// userId 
-// storeId 
-// checkInTime 
-// checkOutTime
-// salesAmount 
-
-// belongsTo : User -> foreignKey : 'userId' 
-// belongsTo : Store -> foreignKey : 'storeId'
-
 import { DataTypes } from "sequelize";
 import dbConnection from "../config/db.js";
 import User from "./userModel.js";
@@ -33,6 +24,10 @@ const Visit = dbConnection.define('Visit', {
             model: Store, // Refers to the Store model
             key: 'store_id',
         },
+    },
+    store_name: {  // New column added to store store name
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     checkin_Time: {
         type: DataTypes.DATE,

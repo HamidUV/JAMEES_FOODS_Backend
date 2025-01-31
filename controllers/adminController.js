@@ -195,41 +195,39 @@ export const getallStoreAdmin = async (req, res) => {
 
  //get each sales man details
 
- export const geteachsalesmandetails = async (req, res) => {
+ // Get each salesperson details (returns user even if no visits)
+export const getEachSalesmanDetails = async (req, res) => {
   try {
-    const user_id = req.params.userid;
-    console.log(user_id);
+      const user_id = req.params.userid;
 
-    if (!user_id) {
-      return res.status(404).json({ message: "User ID not provided" });
-    }
+      if (!user_id) {
+          return res.status(400).json({ message: "User ID is required" });
+      }
 
-    // Fetch the user, excluding admins
-    const user = await User.findOne({
-      where: {
-        user_id: user_id,
-        user_role: { [Op.ne]: 'Admin' }, // Ensure the user is not an admin
-      },
-    });
+      // Fetch the user (excluding admins)
+      const user = await User.findOne({
+          where: {
+              user_id: user_id,
+              user_role: { [Op.ne]: 'Admin' },
+          },
+      });
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found or is an admin" });
-    }
+      if (!user) {
+          return res.status(404).json({ message: "User not found or is an admin" });
+      }
 
-    // Fetch visit details for the user
-    const visit = await Visit.findAll({ where: { user_id: user_id } });
-    if (!visit || visit.length === 0) {
-      return res.status(404).json({ message: "Visit details not found" });
-    }
+      // Fetch visit details for the user
+      const visit = await Visit.findAll({ where: { user_id: user_id } });
 
-    res.status(200).json({
-      message: "Details retrieved successfully",
-      user,
-      visit,
-    });
+      res.status(200).json({
+          message: "Details retrieved successfully",
+          user,
+          visits: visit.length ? visit : "No visits found",
+      });
+
   } catch (error) {
-    console.error("Error fetching details:", error);
-    res.status(500).json({ message: "Server error" });
+      console.error("Error fetching details:", error);
+      res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -431,4 +429,44 @@ export const deacitvestores = async (req, res) => {
     console.error("Error toggling activation status:", error); 
     res.status(500).json({ message: "Server error" }); 
   } 
+};
+
+
+
+// Get total count of users (active & deactivated)
+export const getTotalUsersCount = async (req, res) => {
+  try {
+      // Count active and deactivated users (excluding admins)
+      const totalActiveUsers = await User.count({ where: { is_active: true, user_role: { [Op.ne]: 'Admin' } } });
+      const totalDeactivatedUsers = await User.count({ where: { is_active: false, user_role: { [Op.ne]: 'Admin' } } });
+
+      res.status(200).json({
+          message: "User count retrieved successfully",
+          totalUsers: totalActiveUsers + totalDeactivatedUsers,
+          activeUsers: totalActiveUsers,
+          deactivatedUsers: totalDeactivatedUsers,
+      });
+  } catch (error) {
+      console.error("Error fetching user count:", error);
+      res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get total count of stores (active & deactivated)
+export const getTotalStoresCount = async (req, res) => {
+  try {
+      // Count active and deactivated stores
+      const totalActiveStores = await Store.count({ where: { is_active: true } });
+      const totalDeactivatedStores = await Store.count({ where: { is_active: false } });
+
+      res.status(200).json({
+          message: "Store count retrieved successfully",
+          totalStores: totalActiveStores + totalDeactivatedStores,
+          activeStores: totalActiveStores,
+          deactivatedStores: totalDeactivatedStores,
+      });
+  } catch (error) {
+      console.error("Error fetching store count:", error);
+      res.status(500).json({ message: "Server error" });
+  }
 };

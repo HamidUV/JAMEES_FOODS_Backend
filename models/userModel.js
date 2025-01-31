@@ -1,12 +1,7 @@
-// name 
-// email 
-// password 
-// role 
 import { DataTypes } from "sequelize";
 import dbConnection from "../config/db.js";
 
-
-const User = dbConnection.define('User',{
+const User = dbConnection.define('User', {
     user_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -16,11 +11,19 @@ const User = dbConnection.define('User',{
         type: DataTypes.STRING,
         allowNull: false,
     },
-    user_email:{
-        type:DataTypes.STRING,
-        allowNull:false,
-        validate:{
-            isEmail:true
+    user_email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true
+        },
+    },
+    user_phone: {  // New field for phone number
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isNumeric: true, // Ensure it's a numeric value
+            len: [10, 15] // Restrict length between 10 to 15 digits
         },
     },
     user_password: {
@@ -30,20 +33,16 @@ const User = dbConnection.define('User',{
     user_role: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue:'Salesman'
+        defaultValue: 'Salesman'
     },
-    is_active:{
-        type: DataTypes.BOOLEAN, // Changed to BOOLEAN for true/false values
-      allowNull: false,
-      defaultValue: true, // Default to active
+    is_active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true, // Default to active
     }
-},
-{
-    tableName:'users',
+}, {
+    tableName: 'users',
     timestamps: false,
-}
-);
-
-
+});
 
 export default User;
