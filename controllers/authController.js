@@ -136,3 +136,81 @@ export const login = async (req, res, next) => {
 
 //     }
 // }
+
+
+// Get user profile
+export const getUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const user = await User.findOne({
+            where: { user_id: userId },
+            attributes: ['user_name', 'user_phone', 'user_email'] // Only return necessary fields
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Update user profile
+export const updateUserProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { user_name, user_phone, user_password, user_email } = req.body;
+
+        // Find the user
+        const user = await User.findOne({ where: { user_id: userId } });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Check if phone number already exists (excluding current user)
+        if (user_phone && user_phone !== user.user_phone) {
+            const existingPhone = await User.findOne({ where: { user_phone } });
+            if (existingPhone) {
+                return res.status(409).json({ message: "Phone number is already in use" });
+            }
+        }
+
+        // Check if email already exists (excluding current user)
+        if (user_email && user_email !== "" && user_email !== user.user_email) {
+            const existingEmail = await User.findOne({ where: { user_email } });
+            if (existingEmail) {
+                return res.status(409).json({ message: "Email is already in use" });
+            }
+        }
+
+        // Hash password if provided
+        let hashedPassword = user.user_password;
+        if (user_password) {
+            hashedPassword = await bcrypt.hash(user_password, 10);
+        }
+
+        // Ensure email remains empty instead of null if not provided
+        const newEmail = user_email !== undefined ? user_email : user.user_email || "";
+
+        // Update user details
+        await User.update(
+            {
+                user_name: user_name || user.user_name,
+                user_phone: user_phone || user.user_phone,
+                user_password: hashedPassword,
+                user_email: newEmail // Ensure an empty string instead of null
+            },
+            { where: { user_id: userId } }
+        );
+
+        res.status(200).json({ message: "Profile updated successfully" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server error" });
+    }
+};

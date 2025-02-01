@@ -13,17 +13,18 @@ const User = dbConnection.define('User', {
     },
     user_email: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true, // Email is optional
+        defaultValue: "", // Default to an empty string if not provided
         validate: {
             isEmail: true
         },
     },
-    user_phone: {  // New field for phone number
+    user_phone: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            isNumeric: true, // Ensure it's a numeric value
-            len: [10, 15] // Restrict length between 10 to 15 digits
+            isNumeric: true,
+            len: [10, 15]
         },
     },
     user_password: {
@@ -38,7 +39,7 @@ const User = dbConnection.define('User', {
     is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: true, // Default to active
+        defaultValue: true,
     }
 }, {
     tableName: 'users',
