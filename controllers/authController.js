@@ -16,12 +16,12 @@ export const signup = async (req, res, next) => {
         }
 
         // Check if email or phone number already exists
-        const existingUser = await User.findOne({ where: { user_email } });
+        // const existingUser = await User.findOne({ where: { user_email } });
         const existingPhone = await User.findOne({ where: { user_phone } });
 
-        if (existingUser) {
-            return res.status(409).json({ message: "Email is already in use" });
-        }
+        // if (existingUser) {
+        //     return res.status(409).json({ message: "Email is already in use" });
+        // }
 
         if (existingPhone) {
             return res.status(409).json({ message: "Phone number is already in use" });
@@ -92,19 +92,19 @@ export const signup = async (req, res, next) => {
 
 export const login = async (req, res, next) => {
     try {
-        let { user_email, user_password } = req.body;
+        let { user_phone, user_password } = req.body;
 
-        if (!user_email) throw { email: "Email is required" };
+        if (!user_phone) throw { phone: "Phone number is required" };
         if (!user_password) throw { name: "Password is required" };
 
         let user = await User.findOne({
             where: {
-                user_email
+                user_phone
             }
         });
 
         // Check if user exists
-        if (!user) throw { name: "Invalid email/password" };
+        if (!user) throw { name: "Invalid phone number / password" };
 
         // Check if user is active
         if (!user.is_active) {
@@ -114,7 +114,7 @@ export const login = async (req, res, next) => {
         // Validate password
         let valid = await bcrypt.compare(user_password, user.user_password); 
 
-        if (!valid) throw { name: "Invalid email/password" };
+        if (!valid) throw { name: "Invalid password" };
 
         // Generate JWT tokens
         let access_token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
