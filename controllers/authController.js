@@ -8,10 +8,10 @@ dotenv.config();
 export const signup = async (req, res, next) => {
     try {
         console.log(req.body);
-        const { user_name, user_email, user_phone, user_password } = req.body;
+        const { user_name,  user_phone, user_password } = req.body;
 
         // Validate required fields
-        if (!user_name || !user_email || !user_phone || !user_password) {
+        if (!user_name ||  !user_phone || !user_password) {
             return res.status(400).send({ message: 'All fields are required' });
         }
 
@@ -33,7 +33,6 @@ export const signup = async (req, res, next) => {
         // Create user
         const userData = await User.create({
             user_name,
-            user_email,
             user_phone,
             user_password: hashedPassword
         });
