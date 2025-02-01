@@ -15,9 +15,6 @@ const User = dbConnection.define('User', {
         type: DataTypes.STRING,
         allowNull: true, // Email is optional
         defaultValue: "", // Default to an empty string if not provided
-        validate: {
-            isEmail: true
-        },
     },
     user_phone: {
         type: DataTypes.STRING,
