@@ -11,7 +11,7 @@ userRoute.post('/login',login);
 userRoute.get('/profile', verifyAccessToken, getUserProfile);
 
 // Update profile
-userRoute.put('/profile', verifyAccessToken, updateUserProfile);
+userRoute.patch('/profile', verifyAccessToken, updateUserProfile);
 
 
 export default userRoute;
