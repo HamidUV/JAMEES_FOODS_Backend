@@ -34,6 +34,7 @@ app.get('/',(req,res) => {
 //       user_name: "Admin User",
 //       user_email: "admin@example.com", // Use a secure email
 //       user_password: hashedPassword,
+//       user_phone:"+971123456789",
 //       user_role: "Admin",
 //     });
 //     console.log("Admin user created successfully.");

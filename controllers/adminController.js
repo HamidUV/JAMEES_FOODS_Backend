@@ -222,7 +222,7 @@ export const getEachSalesmanDetails = async (req, res) => {
       res.status(200).json({
           message: "Details retrieved successfully",
           user,
-          visits: visit.length ? visit : "No visits found",
+          visits: visit.length ? visit : 0,
       });
 
   } catch (error) {
