@@ -180,10 +180,15 @@ export const getallStoreAdmin = async (req, res) => {
       if (!users || users.length === 0) {
         return res.status(404).json({ message: "No salesmen found" });
       }
+
+      const activeSalesmens = users.filter(user => user.is_active);
+      const deactivateSalesmens = users.filter(user => !user.is_active);
   
       res.status(200).json({
         message: "Users retrieved successfully",
         users,
+        activeSalesmens,
+        deactivateSalesmens
       });
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -223,7 +228,7 @@ export const getEachSalesmanDetails = async (req, res) => {
           message: "Details retrieved successfully",
           user,
           visits: visit.length ? visit : [],
-      });
+      }); 
 
   } catch (error) {
       console.error("Error fetching details:", error);
