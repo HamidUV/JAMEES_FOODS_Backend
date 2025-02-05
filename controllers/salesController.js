@@ -166,17 +166,18 @@ export const getUserStores = async (req, res) => {
 };
 
 // Get stores by user ID
-export const getStoresById = async (req, res) => {
+// Get store by store ID
+export const getStoreById = async (req, res) => {
     try {
-        const user_id = req.params.id;
-        const stores = await Store.findAll({ where: { created_by: user_id } });
+        const store_id = req.params.store_id;
+        const store = await Store.findByPk(store_id);
 
-        if (!stores.length) {
-            return res.status(404).json({ message: "No stores found for this user" });
+        if (!store) {
+            return res.status(404).json({ message: "Store not found" });
         }
 
-        res.status(200).json(stores);
+        res.status(200).json(store);
     } catch (error) {
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Server error", error: error.message });
     }
 };
