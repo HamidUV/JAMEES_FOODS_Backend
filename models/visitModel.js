@@ -48,11 +48,11 @@ const Visit = dbConnection.define('Visit', {
 });
 
 // Hook to set checkin_Time using Date.now()
-// Visit.beforeCreate((visit) => {
-//     if (!visit.checkin_Time) {
-//         visit.checkin_Time = new Date(Date.now()); // Convert timestamp to Date object
-//     }
-// });
+Visit.beforeCreate((visit) => {
+    if (!visit.checkin_Time) {
+        visit.checkin_Time = new Date(Date.now()); // Convert timestamp to Date object
+    }
+});
 
 // Define associations
 Visit.belongsTo(User, { foreignKey: 'user_id' });
