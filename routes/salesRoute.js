@@ -19,7 +19,7 @@ salesRoute.get('/getallstore',verifyAccessToken,checkUserActive,getAllActiveStor
 //to get all stores of a user
 salesRoute.get('/getallstoreofuser', verifyAccessToken,checkUserActive, getUserStores);
 
-//to getstore by the user made
+// Get store by store ID
 salesRoute.get("/getstore/:id", verifyAccessToken,checkUserActive, getStoreById);
 
 export default salesRoute;

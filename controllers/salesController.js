@@ -75,7 +75,7 @@ export const checkIn = async (req, res, next) => {
             user_id: req.user.id,
             store_id,
             store_name: store.store_name, // Store the store name in the visit record
-            checkInTime: Date()
+            checkInTime: new Date()
         });
 
         res.status(201).json({ message: "Check-in successful", visit });
@@ -165,7 +165,7 @@ export const getUserStores = async (req, res) => {
     }
 };
 
-// Get stores by user ID
+
 // Get store by store ID
 export const getStoreById = async (req, res) => {
     try {

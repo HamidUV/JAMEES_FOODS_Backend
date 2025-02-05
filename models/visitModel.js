@@ -35,7 +35,7 @@ const Visit = dbConnection.define('Visit', {
         allowNull: true,
         get() {
             const rawValue = this.getDataValue('checkin_Time');
-            return rawValue ? moment(rawValue).format("YYYY-MM-DD HH:mm:ss") : null;
+            return rawValue ? moment(rawValue).utcOffset("+05:30").format("YYYY-MM-DD HH:mm:ss") : null;
         }
     },
     checkout_Time: {
@@ -43,7 +43,7 @@ const Visit = dbConnection.define('Visit', {
         allowNull: true,
         get() {
             const rawValue = this.getDataValue('checkout_Time');
-            return rawValue ? moment(rawValue).format("YYYY-MM-DD HH:mm:ss") : null;
+            return rawValue ? moment(rawValue).utcOffset("+05:30").format("YYYY-MM-DD HH:mm:ss") : null;
         }
     },
     sales_Amount: {
@@ -59,13 +59,13 @@ const Visit = dbConnection.define('Visit', {
 // Hook to set checkin_Time using Date.now() in human-readable format
 Visit.beforeCreate((visit) => {
     if (!visit.checkin_Time) {
-        visit.checkin_Time = moment().toDate();
+        visit.checkin_Time = moment().utcOffset("+05:30").toDate();
     }
 });
 
 Visit.beforeUpdate((visit) => {
     if (visit.changed('checkout_Time')) {
-        visit.checkout_Time = moment().toDate();
+        visit.checkout_Time = moment().utcOffset("+05:30").toDate();
     }
 });
 
