@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { checkIn, checkout, createStore, getAllActiveStores, getStoresById , getUserStores} from "../controllers/salesController.js";
+import { checkIn, checkout, createStore, getAllActiveStores, getStoreById , getUserStores} from "../controllers/salesController.js";
 import { verifyAccessToken, checkUserActive} from "../middlewares/authMiddleware.js";
 
 const salesRoute=Router();
@@ -20,6 +20,6 @@ salesRoute.get('/getallstore',verifyAccessToken,checkUserActive,getAllActiveStor
 salesRoute.get('/getallstoreofuser', verifyAccessToken,checkUserActive, getUserStores);
 
 //to getstore by the user made
-salesRoute.get("/getstore/:id", verifyAccessToken,checkUserActive, getStoresById);
+salesRoute.get("/getstore/:id", verifyAccessToken,checkUserActive, getStoreById);
 
 export default salesRoute;
