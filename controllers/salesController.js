@@ -75,7 +75,7 @@ export const checkIn = async (req, res, next) => {
             user_id: req.user.id,
             store_id,
             store_name: store.store_name, // Store the store name in the visit record
-            checkInTime: new Date()
+            checkInTime: Date()
         });
 
         res.status(201).json({ message: "Check-in successful", visit });
