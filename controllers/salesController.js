@@ -93,19 +93,36 @@ export const checkIn = async (req, res, next) => {
         }
 
         const { checkInTime } = req.body; // Get checkInTime from the frontend
+        
+        // Log the incoming request body for debugging
+        console.log("Incoming check-in request body:", req.body);
+
+        // Validate checkInTime
+        if (!checkInTime) {
+            return res.status(400).json({ message: 'checkInTime is required' });
+        }
+
+        const parsedCheckInTime = new Date(checkInTime);
+        
+        // Validate if parsedCheckInTime is a valid date
+        if (isNaN(parsedCheckInTime)) {
+            return res.status(400).json({ message: 'Invalid checkInTime format' });
+        }
 
         const visit = await Visit.create({
             user_id: req.user.id,
             store_id,
             store_name: store.store_name, // Store the store name in the visit record
-            checkInTime: new Date(checkInTime), // Store the time as a Date object
+            checkin_Time: parsedCheckInTime, // Store the time as a Date object
         });
 
         res.status(201).json({ message: "Check-in successful", visit });
     } catch (err) {
+        console.error("Error during check-in:", err);
         res.status(500).json({ message: err.message });
     }
 };
+
 
 
 // Checkout
@@ -153,6 +170,9 @@ export const checkout = async (req, res, next) => {
         const { sales_Amount, checkoutTime } = req.body;
         const user_id = req.user.id;
 
+        // Log the incoming request body for debugging
+        console.log("Incoming checkout request body:", req.body);
+
         if (!sales_Amount) {
             return res.status(400).json({ message: 'Sales amount is required' });
         }
@@ -174,10 +194,22 @@ export const checkout = async (req, res, next) => {
             return res.status(404).json({ message: 'No ongoing visit found to checkout' });
         }
 
+        // Validate checkoutTime
+        if (!checkoutTime) {
+            return res.status(400).json({ message: 'checkoutTime is required' });
+        }
+
+        const parsedCheckoutTime = new Date(checkoutTime);
+
+        // Validate if parsedCheckoutTime is a valid date
+        if (isNaN(parsedCheckoutTime)) {
+            return res.status(400).json({ message: 'Invalid checkoutTime format' });
+        }
+
         // Update visit with sales amount and checkout time
         await visit.update({
             sales_Amount,
-            checkout_Time: new Date(checkoutTime) // Use the checkout time passed from frontend
+            checkout_Time: parsedCheckoutTime // Use the checkout time passed from frontend
         });
 
         res.status(200).json({ message: "Checkout successful", visit });
@@ -187,6 +219,7 @@ export const checkout = async (req, res, next) => {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 
 // Get all active stores
