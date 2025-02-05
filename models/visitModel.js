@@ -2,7 +2,6 @@ import { DataTypes } from "sequelize";
 import dbConnection from "../config/db.js";
 import User from "./userModel.js";
 import Store from "./storeModel.js";
-import moment from "moment";
 
 const Visit = dbConnection.define('Visit', {
     visit_id: {
@@ -14,7 +13,7 @@ const Visit = dbConnection.define('Visit', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: User,
+            model: User, // Refers to the User model
             key: 'user_id',
         },
     },
@@ -22,53 +21,40 @@ const Visit = dbConnection.define('Visit', {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: Store,
+            model: Store, // Refers to the Store model
             key: 'store_id',
         },
     },
-    store_name: {
+    store_name: {  // New column added to store store name
         type: DataTypes.STRING,
         allowNull: false,
     },
     checkin_Time: {
         type: DataTypes.DATE,
         allowNull: true,
-        get() {
-            const rawValue = this.getDataValue('checkin_Time');
-            return rawValue ? moment(rawValue).utcOffset("+04:00").format("YYYY-MM-DD HH:mm:ss") : null;
-        }
     },
     checkout_Time: {
         type: DataTypes.DATE,
-        allowNull: true,
-        get() {
-            const rawValue = this.getDataValue('checkout_Time');
-            return rawValue ? moment(rawValue).utcOffset("+04:00").format("YYYY-MM-DD HH:mm:ss") : null;
-        }
+        allowNull: true, // Optional since checkout might not happen immediately
     },
     sales_Amount: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 2), // For precise monetary values
         allowNull: false,
-        defaultValue: 0.0,
+        defaultValue: 0.0, // Default to 0 in case no sales are made
     },
 }, {
     tableName: 'visit',
     timestamps: false,
 });
 
-// Hook to set checkin_Time using Date.now() in human-readable format
-Visit.beforeCreate((visit) => {
-    if (!visit.checkin_Time) {
-        visit.checkin_Time = moment().utcOffset("+04:00").toDate();  // Set UAE Time
-    }
-});
+// Hook to set checkin_Time using Date.now()
+// Visit.beforeCreate((visit) => {
+//     if (!visit.checkin_Time) {
+//         visit.checkin_Time = new Date(Date.now()); // Convert timestamp to Date object
+//     }
+// });
 
-Visit.beforeUpdate((visit) => {
-    if (visit.changed('checkout_Time')) {
-        visit.checkout_Time = moment().utcOffset("+04:00").toDate(); // Set UAE Time
-    }
-});
-
+// Define associations
 Visit.belongsTo(User, { foreignKey: 'user_id' });
 Visit.belongsTo(Store, { foreignKey: 'store_id' });
 

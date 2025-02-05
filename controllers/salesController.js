@@ -62,6 +62,27 @@ export const createStore = async (req, res, next) => {
 };
 
 // Check-in
+// export const checkIn = async (req, res, next) => {
+//     try {
+//         const store_id = req.params.storeid;
+//         const store = await Store.findByPk(store_id);
+
+//         if (!store) {
+//             return res.status(404).json({ message: "Store not found" });
+//         }
+
+//         const visit = await Visit.create({
+//             user_id: req.user.id,
+//             store_id,
+//             store_name: store.store_name, // Store the store name in the visit record
+//             checkInTime: new Date()
+//         });
+
+//         res.status(201).json({ message: "Check-in successful", visit });
+//     } catch (err) {
+//         res.status(500).json({ message: err.message });
+//     }
+// };
 export const checkIn = async (req, res, next) => {
     try {
         const store_id = req.params.storeid;
@@ -71,11 +92,13 @@ export const checkIn = async (req, res, next) => {
             return res.status(404).json({ message: "Store not found" });
         }
 
+        const { checkInTime } = req.body; // Get checkInTime from the frontend
+
         const visit = await Visit.create({
             user_id: req.user.id,
             store_id,
             store_name: store.store_name, // Store the store name in the visit record
-            checkInTime: new Date()
+            checkInTime: new Date(checkInTime), // Store the time as a Date object
         });
 
         res.status(201).json({ message: "Check-in successful", visit });
@@ -84,10 +107,50 @@ export const checkIn = async (req, res, next) => {
     }
 };
 
+
 // Checkout
+// export const checkout = async (req, res, next) => {
+//     try {
+//         const { sales_Amount } = req.body;
+//         const user_id = req.user.id;
+
+//         if (!sales_Amount) {
+//             return res.status(400).json({ message: 'Sales amount is required' });
+//         }
+
+//         const user = await User.findByPk(user_id);
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+
+//         // Find the ongoing visit
+//         const visit = await Visit.findOne({
+//             where: {
+//                 user_id,
+//                 checkout_Time: null
+//             }
+//         });
+
+//         if (!visit) {
+//             return res.status(404).json({ message: 'No ongoing visit found to checkout' });
+//         }
+
+//         // Update visit with sales amount and checkout time
+//         await visit.update({
+//             sales_Amount,
+//             checkout_Time: new Date()
+//         });
+
+//         res.status(200).json({ message: "Checkout successful", visit });
+
+//     } catch (err) {
+//         console.error("Error during checkout:", err);
+//         res.status(500).json({ message: err.message });
+//     }
+// };
 export const checkout = async (req, res, next) => {
     try {
-        const { sales_Amount } = req.body;
+        const { sales_Amount, checkoutTime } = req.body;
         const user_id = req.user.id;
 
         if (!sales_Amount) {
@@ -114,7 +177,7 @@ export const checkout = async (req, res, next) => {
         // Update visit with sales amount and checkout time
         await visit.update({
             sales_Amount,
-            checkout_Time: new Date()
+            checkout_Time: new Date(checkoutTime) // Use the checkout time passed from frontend
         });
 
         res.status(200).json({ message: "Checkout successful", visit });
@@ -124,6 +187,7 @@ export const checkout = async (req, res, next) => {
         res.status(500).json({ message: err.message });
     }
 };
+
 
 // Get all active stores
 export const getAllActiveStores = async (req, res) => {
