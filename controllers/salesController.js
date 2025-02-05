@@ -169,7 +169,7 @@ export const getUserStores = async (req, res) => {
 // Get store by store ID
 export const getStoreById = async (req, res) => {
     try {
-        const store_id = req.params.store_id;
+        const store_id = req.params.id;
         const store = await Store.findByPk(store_id);
 
         if (!store) {
