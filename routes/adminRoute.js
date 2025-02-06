@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { adminLogin, deacitvestores, getallStoreAdmin, getAllUsersExceptAdmins, getEachSalesmanDetails, geteachStore, toggleUserStatus, getTotalUsersCount, getTotalStoresCount } from "../controllers/adminController.js";
-import { verifyAccessToken } from "../middlewares/authMiddleware.js";
+import { verifyAccessToken, verifyAdminRole } from "../middlewares/authMiddleware.js";
 
 const adminRoute=Router();
 
@@ -10,27 +10,27 @@ adminRoute.post('/adminlogin',adminLogin);
 
 
 //to get all stores for the admin
-adminRoute.get('/getallstoreadmin',verifyAccessToken,getallStoreAdmin);
+adminRoute.get('/getallstoreadmin',verifyAccessToken,verifyAdminRole,getallStoreAdmin);
 
 
 //to get each details ofthe admin
-adminRoute.get('/geteachstore/:storeid',verifyAccessToken,geteachStore);
+adminRoute.get('/geteachstore/:storeid',verifyAccessToken,verifyAdminRole,geteachStore);
 
 
 //to get all the users
-adminRoute.get('/getalluseradmin',verifyAccessToken,getAllUsersExceptAdmins);
+adminRoute.get('/getalluseradmin',verifyAccessToken,verifyAdminRole,getAllUsersExceptAdmins);
 
 
 //to get all details of the users
-adminRoute.get('/geteachsalesmandetails/:userid',verifyAccessToken,getEachSalesmanDetails);
+adminRoute.get('/geteachsalesmandetails/:userid',verifyAccessToken,verifyAdminRole,getEachSalesmanDetails);
 
 
 //to activate and deactivate the salesman
-adminRoute.put('/activate-deactivate-user/:userid',verifyAccessToken,toggleUserStatus);
+adminRoute.put('/activate-deactivate-user/:userid',verifyAccessToken,verifyAdminRole,toggleUserStatus);
 
 
 //to delete the store
-adminRoute.put('/activate-deactivate-store/:storeid',verifyAccessToken,deacitvestores);
+adminRoute.put('/activate-deactivate-store/:storeid',verifyAccessToken,verifyAdminRole,deacitvestores);
 
 //delete or deactivate
 // adminRoute.delete('/deletestore/:storeid',verifyAccessToken,deleteStore)
@@ -41,9 +41,9 @@ adminRoute.put('/activate-deactivate-store/:storeid',verifyAccessToken,deacitves
 // create users count - active & deactive users
 
 // Get total count of users (active & deactivated)
-adminRoute.get('/users/count', verifyAccessToken, getTotalUsersCount);
+adminRoute.get('/users/count', verifyAccessToken, verifyAdminRole,getTotalUsersCount);
 
 // Get total count of stores (active & deactivated)
-adminRoute.get('/stores/count', verifyAccessToken, getTotalStoresCount);
+adminRoute.get('/stores/count', verifyAccessToken,verifyAdminRole, getTotalStoresCount);
 
 export default adminRoute;

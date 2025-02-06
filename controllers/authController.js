@@ -116,8 +116,8 @@ export const login = async (req, res, next) => {
         if (!valid) throw { name: "Invalid password" };
 
         // Generate JWT tokens
-        let access_token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        let refresh_token = jwt.sign({ id: user.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+        let access_token = jwt.sign({ id: user.user_id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        let refresh_token = jwt.sign({ id: user.user_id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
 
         // Send response with tokens
         res.status(200).json({ message: "You are logged in", access_token, refresh_token });

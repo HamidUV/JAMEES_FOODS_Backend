@@ -84,17 +84,18 @@ export const adminLogin = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+
+
     // Generate JWT token
-    const token = jwt.sign(
-      { id: adminUser.user_id, role: adminUser.user_role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    // const token = jwt.sign({ id: adminUser.user_id, role: adminUser.user_role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    let access_token = jwt.sign({ id: adminUser.user_id, role: adminUser.user_role }, process.env.JWT_SECRET, { expiresIn: '30d' });
+    // let refresh_token = jwt.sign({ id: adminUser.user_id, role: adminUser.user_role }, process.env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
 
     // Respond with token and admin details
     res.status(200).json({
       message: "Login successful",
-      token,
+      access_token,
+      
       admin: {
         id: adminUser.user_id,
         email: adminUser.user_email,
@@ -138,7 +139,7 @@ export const getallStoreAdmin = async (req, res) => {
 
   //geteachStore
 
-  export const geteachStore = async (req, res) => {
+export const geteachStore = async (req, res) => {
     try {
       const  store_id  = req.params.storeid; 
       console.log("Requested Store ID:", store_id);
@@ -168,7 +169,7 @@ export const getallStoreAdmin = async (req, res) => {
 
   //get all saleman
 
-  export const getAllUsersExceptAdmins = async (req, res) => {
+export const getAllUsersExceptAdmins = async (req, res) => {
     try {
       // Fetch all users where user_role is not 'Admin'
       const users = await User.findAll({
